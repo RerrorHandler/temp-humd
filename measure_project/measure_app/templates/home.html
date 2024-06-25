@@ -1,0 +1,70 @@
+<!-- home.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Temperature Chart</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Temperature Chart</h1>
+    
+    <!-- Форма для выбора временного диапазона -->
+    <form id="date_range_form">
+        <label for="start_date">Start Date and Time:</label>
+        <input type="datetime-local" id="start_date" name="start_date">
+
+        <label for="end_date">End Date and Time:</label>
+        <input type="datetime-local" id="end_date" name="end_date">
+
+        <button type="submit">Generate Chart</button>
+    </form>
+
+    <!-- div для отображения графика -->
+    <div id="temperature_chart"></div>
+
+    <script>
+        document.getElementById('date_range_form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetchTemperatureData();
+        });
+
+        function fetchTemperatureData() {
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+
+            fetch(`/api/temperature-data/?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Построение графиков с помощью Plotly.js
+                    console.log(data)
+                    const layout = {
+                        title: 'Temperature Data',
+                        xaxis: {
+                            title: 'Time',
+                            type: 'date'
+                        },
+                        yaxis: {
+                            title: 'Temperature',
+                        }
+                    };
+
+                    const chartData = [];
+                    data.temperature_data.forEach(board => {
+                        chartData.push({
+                            x: board.timestamps,
+                            y: board.temperatures,
+                            mode: 'markers',
+                            type: 'scatter',
+                            connectgaps: false,
+                            line: {
+                                width: 3
+                            }
+                        });
+                    });
+
+                    Plotly.newPlot('temperature_chart', chartData, layout);
+                });
+        }
+    </script>
+</body>
+</html>
