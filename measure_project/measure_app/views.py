@@ -53,8 +53,8 @@ def temperature_data_api(request):
                                          .order_by('created_at')
 
             timestamps = [data.created_at.isoformat() for data in board_data]
-            temperatures = [data.avg_temp if data.avg_temp else 0 for data in board_data]
-
+            temperatures = [data.avg_temp if data.avg_temp else 'null' for data in board_data]
+            
             temperature_data.append({
                 'board_name': board_name,
                 'timestamps': timestamps,

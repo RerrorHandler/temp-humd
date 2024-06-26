@@ -36,7 +36,6 @@
                 .then(response => response.json())
                 .then(data => {
                     // Построение графиков с помощью Plotly.js
-                    console.log(data)
                     const layout = {
                         title: 'Temperature Data',
                         xaxis: {
@@ -49,19 +48,16 @@
                     };
 
                     const chartData = [];
-                    data.temperature_data.forEach(board => {
-                        chartData.push({
+                    data.temperature_data.forEach((board) => 
+                    {
+                        console.log(board.temperatures)
+                            chartData.push({
+                            name: board.board_name,
                             x: board.timestamps,
                             y: board.temperatures,
-                            mode: 'markers',
-                            type: 'scatter',
-                            connectgaps: false,
-                            line: {
-                                width: 3
-                            }
+                            mode: 'lines+markers',
                         });
                     });
-
                     Plotly.newPlot('temperature_chart', chartData, layout);
                 });
         }
